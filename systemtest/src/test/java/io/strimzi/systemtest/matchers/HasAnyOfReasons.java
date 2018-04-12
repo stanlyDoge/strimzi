@@ -6,8 +6,6 @@ package io.strimzi.systemtest.matchers;
 
 import io.fabric8.kubernetes.api.model.Event;
 import io.strimzi.systemtest.k8s.Events;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,20 +15,16 @@ import java.util.stream.Collectors;
  * <p>A HasAllOfReasons is custom matcher to check the partial matching of reasons for actual events.
  * Checks at least one match in events.</p>
  */
-public class HasAnyOfReasons extends BaseMatcher<List<Event>> {
-
-    private Events[] eventReasons;
+public class HasAnyOfReasons extends BaseReasonsMatcher {
 
     public HasAnyOfReasons(Events... eventReasons) {
-        this.eventReasons = eventReasons;
+        super("at least one of", eventReasons);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public boolean matches(Object actualValue) {
-        List<String> actualReasons = ((List<Event>) actualValue).stream()
-                .map(Event::getReason)
-                .collect(Collectors.toList());
+        List<String> actualReasons = eventReasons((List<Event>) actualValue);
 
         List<String> expectedReasons = Arrays.stream(eventReasons)
                 .map(Enum::name)
@@ -45,8 +39,4 @@ public class HasAnyOfReasons extends BaseMatcher<List<Event>> {
         return false;
     }
 
-    @Override
-    public void describeTo(Description description) {
-        description.appendValueList("The resource should contain at least one the following events {", ", ", "}. ", eventReasons);
-    }
 }
