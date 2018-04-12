@@ -6,16 +6,16 @@ export BRANCH=${BRANCH:-master}
 export TAG=${TAG:-latest}
 export DOCKER_ORG=${DOCKER_ORG:-strimzici}
 export DOCKER_REGISTRY=${DOCKER_REGISTRY:-docker.io}
-export DOCKER_TAG=$COMMIT
+export DOCKER_TAG=$BRANCH
 
-DOCKER_TAG=$BRANCH make docker_build
+RELEASE_VERSION=$BRANCH DOCKER_TAG=$BRANCH make docker_build
 
 echo "Login into Docker Hub ..."
 docker login -u $DOCKER_USER -p $DOCKER_PASS
 
 DOCKER_TAG=$BRANCH make docker_push
 
-DOCKER_TAG=$COMMIT make docker_push
+#DOCKER_TAG=$COMMIT make docker_push
 
 echo "Running systemtests"
 ./systemtest/scripts/run_tests.sh ${SYSTEMTEST_ARGS}
