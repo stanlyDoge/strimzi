@@ -8,16 +8,13 @@ build:
 	# Copy adoc to build path
 	cp -r ./adoc $(BUILD_PATH)
 
-	# Replace image tags
-	find $(BUILD_PATH)/adoc/ -name '*.adoc' -type f -exec sed -i '/:revnumber: [a-zA-Z0-9_-.]\+/s/:revnumber: [a-zA-Z0-9_-.]\+/:revnumber: $(RELEASE_VERSION)/' {} \;
-
 	# Generate HTML
 	mkdir -p $(BUILD_PATH)/html
-	asciidoctor $(BUILD_PATH)/adoc/docu.adoc -o $(BUILD_PATH)/html/master.html
+	asciidoctor -a revnumber=$(RELEASE_VERSION) $(BUILD_PATH)/adoc/docu.adoc -o $(BUILD_PATH)/html/master.html
 
 	# Generate noheader HTML
 	mkdir -p documentation/htmlnoheader
-	asciidoctor -s $(BUILD_PATH)/adoc/docu.adoc -o $(BUILD_PATH)/htmlnoheader/master.html
+	asciidoctor -a revnumber=$(RELEASE_VERSION) -s $(BUILD_PATH)/adoc/docu.adoc -o $(BUILD_PATH)/htmlnoheader/master.html
 
 	# Copy images
 	cp -vr $(BUILD_PATH)/adoc/images $(BUILD_PATH)/html/images
