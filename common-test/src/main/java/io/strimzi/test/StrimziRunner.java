@@ -55,9 +55,9 @@ public class StrimziRunner extends BlockJUnit4ClassRunner {
      * in the state it was in when the test failed.
      */
     public static final String NOTEARDOWN = "NOTEARDOWN";
-    public static final String KAFKA_EPHEMERAL_CM = "../examples/configmaps/cluster-controller/kafka-ephemeral.yaml";
-    public static final String KAFKA_CONNECT_CM = "../examples/configmaps/cluster-controller/kafka-connect.yaml";
-    public static final String CC_INSTALL_DIR = "../examples/install/cluster-controller";
+    public static final String KAFKA_EPHEMERAL_CM = "../build/examples/configmaps/cluster-controller/kafka-ephemeral.yaml";
+    public static final String KAFKA_CONNECT_CM = "../build/examples/configmaps/cluster-controller/kafka-connect.yaml";
+    public static final String CC_INSTALL_DIR = "../build/examples/install/cluster-controller";
     public static final String CC_DEPLOYMENT_NAME = "strimzi-cluster-controller";
 
     private KubeClusterResource clusterResource;
@@ -319,10 +319,6 @@ public class StrimziRunner extends BlockJUnit4ClassRunner {
         return last;
     }
 
-    private String changeOrgAndTag(String image, String newOrg, String newTag) {
-        return image.replaceFirst("^strimzi/", newOrg + "/").replaceFirst(":[^:]+$", ":" + newTag);
-    }
-
     private Statement withClusterController(Annotatable element,
                                     Statement statement) {
         Statement last = statement;
@@ -330,18 +326,9 @@ public class StrimziRunner extends BlockJUnit4ClassRunner {
             List<String> yamls = Arrays.stream(new File(CC_INSTALL_DIR).listFiles()).sorted().map(f -> getContent(f, node -> {
                 // Change the docker org of the images in the 04-deployment.yaml
                 if ("04-deployment.yaml".equals(f.getName())) {
-                    String dockerOrg = System.getenv().getOrDefault("DOCKER_ORG", "strimzi");
-                    String dockerTag = System.getenv().getOrDefault("DOCKER_TAG", "latest");
                     JsonNode containerNode = node.get("spec").get("template").get("spec").get("containers").get(0);
-                    JsonNode ccImageNode = containerNode.get("image");
-                    ((ObjectNode) containerNode).put("image", changeOrgAndTag(ccImageNode.asText(), dockerOrg, dockerTag));
                     for (JsonNode envVar : containerNode.get("env")) {
                         String varName = envVar.get("name").textValue();
-                        // Replace all the default images with ones from the $DOCKER_ORG org and with the $DOCKER_TAG tag
-                        if (varName.matches("STRIMZI_DEFAULT_.*_IMAGE")) {
-                            String value = envVar.get("value").textValue();
-                            ((ObjectNode) envVar).put("value", changeOrgAndTag(value, dockerOrg, dockerTag));
-                        }
                         // Updates default values of env variables
                         for (EnvVariables envVariable : cc.envVariables()) {
                             if (varName.equals(envVariable.key())) {

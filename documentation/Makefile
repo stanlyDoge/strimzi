@@ -25,4 +25,6 @@ build:
 	# Delete the adoc dir from the build path
 	rm -rf $(BUILD_PATH)/adoc
 
+docker_build: build
+
 .PHONY: all build clean docker_build docker_push docker_tag

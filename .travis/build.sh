@@ -8,7 +8,7 @@ export DOCKER_ORG=${DOCKER_ORG:-strimzici}
 export DOCKER_REGISTRY=${DOCKER_REGISTRY:-docker.io}
 export DOCKER_TAG=$COMMIT
 
-make docker_build
+DOCKER_TAG=$BRANCH make docker_build
 
 echo "Login into Docker Hub ..."
 docker login -u $DOCKER_USER -p $DOCKER_PASS
