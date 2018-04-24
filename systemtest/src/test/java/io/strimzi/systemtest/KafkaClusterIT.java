@@ -82,7 +82,10 @@ public class KafkaClusterIT extends AbstractClusterIT {
     }
 
     @Test
-    @KafkaCluster(name = CLUSTER_NAME, kafkaNodes = 3)
+    @KafkaCluster(name = CLUSTER_NAME, kafkaNodes = 3, config = {
+            @CmData(key = "kafka-storage", value = "{ \"type\": \"ephemeral\" }"),
+            @CmData(key = "zookeeper-storage", value = "{ \"type\": \"ephemeral\" }")
+    })
     public void testKafkaScaleUpScaleDown() {
         // kafka cluster already deployed via annotation
         LOGGER.info("Running kafkaScaleUpScaleDown {}", CLUSTER_NAME);
@@ -138,7 +141,10 @@ public class KafkaClusterIT extends AbstractClusterIT {
     }
 
     @Test
-    @KafkaCluster(name = CLUSTER_NAME, kafkaNodes = 1, zkNodes = 1)
+    @KafkaCluster(name = CLUSTER_NAME, kafkaNodes = 1, zkNodes = 1, config = {
+            @CmData(key = "kafka-storage", value = "{ \"type\": \"ephemeral\" }"),
+            @CmData(key = "zookeeper-storage", value = "{ \"type\": \"ephemeral\" }")
+    })
     public void testZookeeperScaleUpScaleDown() {
         // kafka cluster already deployed via annotation
         LOGGER.info("Running zookeeperScaleUpScaleDown with cluster {}", CLUSTER_NAME);
@@ -233,6 +239,8 @@ public class KafkaClusterIT extends AbstractClusterIT {
 
     @Test
     @KafkaCluster(name = "my-cluster", kafkaNodes = 2, zkNodes = 2, config = {
+            @CmData(key = "kafka-storage", value = "{ \"type\": \"ephemeral\" }"),
+            @CmData(key = "zookeeper-storage", value = "{ \"type\": \"ephemeral\" }"),
             @CmData(key = "zookeeper-healthcheck-delay", value = "30"),
             @CmData(key = "zookeeper-healthcheck-timeout", value = "10"),
             @CmData(key = "kafka-healthcheck-delay", value = "30"),
@@ -340,7 +348,10 @@ public class KafkaClusterIT extends AbstractClusterIT {
 
     @Test
     @KafkaCluster(name = CLUSTER_NAME, kafkaNodes = 3, config = {
-            @CmData(key = "KAFKA_DEFAULT_REPLICATION_FACTOR", value = "1")})
+            @CmData(key = "kafka-storage", value = "{ \"type\": \"ephemeral\" }"),
+            @CmData(key = "zookeeper-storage", value = "{ \"type\": \"ephemeral\" }"),
+            @CmData(key = "KAFKA_DEFAULT_REPLICATION_FACTOR", value = "1")
+    })
     @Topic(name = TOPIC_NAME, clusterName = "my-cluster")
     public void testSendMessages() {
         int messagesCount = 20;
