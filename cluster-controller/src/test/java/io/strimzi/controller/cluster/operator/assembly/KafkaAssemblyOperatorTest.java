@@ -21,6 +21,7 @@ import io.strimzi.controller.cluster.model.TopicController;
 import io.strimzi.controller.cluster.model.ZookeeperCluster;
 import io.strimzi.controller.cluster.operator.resource.ConfigMapOperator;
 import io.strimzi.controller.cluster.operator.resource.DeploymentOperator;
+import io.strimzi.controller.cluster.operator.resource.EventOperator;
 import io.strimzi.controller.cluster.operator.resource.KafkaSetOperator;
 import io.strimzi.controller.cluster.operator.resource.PvcOperator;
 import io.strimzi.controller.cluster.operator.resource.ReconcileResult;
@@ -161,6 +162,7 @@ public class KafkaAssemblyOperatorTest {
         KafkaSetOperator mockKsOps = mock(KafkaSetOperator.class);
         PvcOperator mockPvcOps = mock(PvcOperator.class);
         DeploymentOperator mockDepOps = mock(DeploymentOperator.class);
+        EventOperator mockEventOps = mock(EventOperator.class);
 
         // Create a CM
         String clusterCmName = clusterCm.getMetadata().getName();
@@ -196,7 +198,7 @@ public class KafkaAssemblyOperatorTest {
                 ClusterControllerConfig.DEFAULT_OPERATION_TIMEOUT_MS,
                 mockCmOps,
                 mockServiceOps, mockZsOps, mockKsOps,
-                mockPvcOps, mockDepOps);
+                mockPvcOps, mockDepOps, mockEventOps);
 
         // Now try to create a KafkaCluster based on this CM
         Async async = context.async();
@@ -281,6 +283,7 @@ public class KafkaAssemblyOperatorTest {
         KafkaSetOperator mockKsOps = mock(KafkaSetOperator.class);
         PvcOperator mockPvcOps = mock(PvcOperator.class);
         DeploymentOperator mockDepOps = mock(DeploymentOperator.class);
+        EventOperator mockEventOps = mock(EventOperator.class);
 
         String clusterCmName = clusterCm.getMetadata().getName();
         String clusterCmNamespace = clusterCm.getMetadata().getNamespace();
@@ -316,7 +319,7 @@ public class KafkaAssemblyOperatorTest {
                 mockCmOps,
                 mockServiceOps, mockZsOps, mockKsOps,
                 mockPvcOps,
-                mockDepOps);
+                mockDepOps, mockEventOps);
 
         // Now try to delete a KafkaCluster based on this CM
         Async async = context.async();
@@ -475,6 +478,7 @@ public class KafkaAssemblyOperatorTest {
         KafkaSetOperator mockKsOps = mock(KafkaSetOperator.class);
         PvcOperator mockPvcOps = mock(PvcOperator.class);
         DeploymentOperator mockDepOps = mock(DeploymentOperator.class);
+        EventOperator mockEventOps = mock(EventOperator.class);
 
         String clusterCmName = clusterCm.getMetadata().getName();
         String clusterCmNamespace = clusterCm.getMetadata().getNamespace();
@@ -585,7 +589,7 @@ public class KafkaAssemblyOperatorTest {
                 ClusterControllerConfig.DEFAULT_OPERATION_TIMEOUT_MS,
                 mockCmOps,
                 mockServiceOps, mockZsOps, mockKsOps,
-                mockPvcOps, mockDepOps);
+                mockPvcOps, mockDepOps, mockEventOps);
 
         // Now try to update a KafkaCluster based on this CM
         Async async = context.async();
@@ -624,6 +628,7 @@ public class KafkaAssemblyOperatorTest {
         KafkaSetOperator mockKsOps = mock(KafkaSetOperator.class);
         PvcOperator mockPvcOps = mock(PvcOperator.class);
         DeploymentOperator mockDepOps = mock(DeploymentOperator.class);
+        EventOperator mockEventOps = mock(EventOperator.class);
 
         String clusterCmNamespace = "myNamespace";
 
@@ -663,7 +668,7 @@ public class KafkaAssemblyOperatorTest {
                 ClusterControllerConfig.DEFAULT_OPERATION_TIMEOUT_MS,
                 mockCmOps,
                 mockServiceOps, mockZsOps, mockKsOps,
-                mockPvcOps, mockDepOps) {
+                mockPvcOps, mockDepOps, mockEventOps) {
             @Override
             public void createOrUpdate(Reconciliation reconciliation, ConfigMap assemblyCm, Handler h) {
                 createdOrUpdated.add(assemblyCm.getMetadata().getName());
