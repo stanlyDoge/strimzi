@@ -31,18 +31,18 @@ public class ClientUtils {
     // ensuring that object can not be created outside of class
     private ClientUtils() {}
 
-    public static void waitUntilClientReceivedMessagesTls(KafkaClientOperations kafkaClient, int exceptedMessages) throws Exception {
+    public static void waitUntilClientReceivedMessagesTls(KafkaClientOperations kafkaClient, int expectedMessages) throws Exception {
         for (int tries = 1; ; tries++) {
             int receivedMessages = kafkaClient.receiveMessagesTls(Constants.GLOBAL_CLIENTS_TIMEOUT);
 
-            if (receivedMessages == exceptedMessages) {
-                LOGGER.info("Consumer successfully consumed {} messages for the {} time", exceptedMessages, tries);
+            if (receivedMessages == expectedMessages) {
+                LOGGER.info("Consumer successfully consumed {} messages for the {} time", expectedMessages, tries);
                 break;
             }
-            LOGGER.warn("Client not received excepted messages {}, instead received only {}!", exceptedMessages, receivedMessages);
+            LOGGER.warn("Client not received excepted messages {}, instead received only {}!", expectedMessages, receivedMessages);
 
             if (tries == 3) {
-                throw new RuntimeException(String.format("Consumer wasn't able to consume %s messages for 3 times", exceptedMessages));
+                throw new RuntimeException(String.format("Consumer wasn't able to consume %s messages for 3 times", expectedMessages));
             }
         }
     }

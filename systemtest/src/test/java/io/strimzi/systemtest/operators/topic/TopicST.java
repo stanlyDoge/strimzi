@@ -262,12 +262,12 @@ public class TopicST extends AbstractST {
         KafkaTopicResource.replaceTopicResource(topicName, t -> t.getSpec().setReplicas(1));
         KafkaTopicUtils.waitForKafkaTopicNotReady(topicName);
 
-        String exceptedMessage = "Changing 'spec.replicas' is not supported. This KafkaTopic's 'spec.replicas' should be reverted to 3 and then the replication should be changed directly in Kafka.";
-        assertThat(KafkaTopicResource.kafkaTopicClient().inNamespace(NAMESPACE).withName(topicName).get().getStatus().getConditions().get(0).getMessage().contains(exceptedMessage), is(true));
+        String expectedMessage = "Changing 'spec.replicas' is not supported. This KafkaTopic's 'spec.replicas' should be reverted to 3 and then the replication should be changed directly in Kafka.";
+        assertThat(KafkaTopicResource.kafkaTopicClient().inNamespace(NAMESPACE).withName(topicName).get().getStatus().getConditions().get(0).getMessage().contains(expectedMessage), is(true));
 
         String topicCRDMessage = KafkaTopicResource.kafkaTopicClient().inNamespace(NAMESPACE).withName(topicName).get().getStatus().getConditions().get(0).getMessage();
 
-        assertThat(topicCRDMessage, containsString(exceptedMessage));
+        assertThat(topicCRDMessage, containsString(expectedMessage));
 
         cmdKubeClient().deleteByName(KafkaTopic.RESOURCE_SINGULAR, topicName);
         KafkaTopicUtils.waitForKafkaTopicDeletion(topicName);
@@ -392,12 +392,12 @@ public class TopicST extends AbstractST {
         });
         KafkaTopicUtils.waitForKafkaTopicNotReady(topicName);
 
-        String exceptedMessage = "Number of partitions cannot be decreased";
-        assertThat(KafkaTopicResource.kafkaTopicClient().inNamespace(NAMESPACE).withName(topicName).get().getStatus().getConditions().get(0).getMessage(), is(exceptedMessage));
+        String expectedMessage = "Number of partitions cannot be decreased";
+        assertThat(KafkaTopicResource.kafkaTopicClient().inNamespace(NAMESPACE).withName(topicName).get().getStatus().getConditions().get(0).getMessage(), is(expectedMessage));
 
         String topicCRDMessage = KafkaTopicResource.kafkaTopicClient().inNamespace(NAMESPACE).withName(topicName).get().getStatus().getConditions().get(0).getMessage();
 
-        assertThat(topicCRDMessage, containsString(exceptedMessage));
+        assertThat(topicCRDMessage, containsString(expectedMessage));
 
         KafkaTopic newKafkaTopic = KafkaTopicResource.createAndWaitForReadiness(KafkaTopicResource.topic(TOPIC_CLUSTER_NAME, newTopicName, 1, 1).build());
 
