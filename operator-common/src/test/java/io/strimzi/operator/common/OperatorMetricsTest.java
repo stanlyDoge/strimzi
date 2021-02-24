@@ -123,8 +123,10 @@ public class OperatorMetricsTest {
                 return Future.failedFuture(new RuntimeException("Test error"));
             }
 
-            protected void validate(HasMetadata resource) {
+            @Override
+            public Set<Condition> validate(CustomResource resource) {
                 // Do nothing
+                return emptySet();
             }
 
             @Override
@@ -155,6 +157,7 @@ public class OperatorMetricsTest {
                             .tag("kind", "TestResource")
                             .tag("name", "my-resource")
                             .tag("resource-namespace", "my-namespace")
+                            .tag("reason", "Test error")
                             .gauge().value(), is(0.0));
 
                     async.flag();
@@ -173,7 +176,9 @@ public class OperatorMetricsTest {
                 return Future.failedFuture(new UnableToAcquireLockException());
             }
 
+            @Override
             public Set<Condition> validate(CustomResource resource) {
+                // Do nothing
                 return emptySet();
             }
 
@@ -232,7 +237,9 @@ public class OperatorMetricsTest {
                 return null;
             }
 
+            @Override
             public Set<Condition> validate(CustomResource resource) {
+                // Do nothing
                 return emptySet();
             }
 
@@ -293,7 +300,9 @@ public class OperatorMetricsTest {
                 return Future.succeededFuture(resources);
             }
 
+            @Override
             public Set<Condition> validate(CustomResource resource) {
+                // Do nothing
                 return emptySet();
             }
 
@@ -352,10 +361,10 @@ public class OperatorMetricsTest {
         return metrics;
     }
 
-    private abstract static class MyResource extends CustomResource {
+    protected abstract static class MyResource extends CustomResource {
     }
 
-    private AbstractWatchableStatusedResourceOperator resourceOperatorWithExistingResource()    {
+    protected AbstractWatchableStatusedResourceOperator resourceOperatorWithExistingResource()    {
         return new AbstractWatchableStatusedResourceOperator(vertx, null, "TestResource") {
             @Override
             public Future updateStatusAsync(HasMetadata resource) {
